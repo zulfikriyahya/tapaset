@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class StockMovement extends Model
 {
@@ -44,23 +44,23 @@ class StockMovement extends Model
         ];
     }
 
-    public function item(): BelongsTo
+    public function item()
     {
         return $this->belongsTo(Item::class);
     }
 
-    public function fromLocation(): BelongsTo
+    public function fromLocation()
     {
-        return $this->belongsTo(Location::class);
+        return $this->belongsTo(Location::class, 'from_location_id');
     }
 
-    public function toLocation(): BelongsTo
+    public function toLocation()
     {
-        return $this->belongsTo(Location::class);
+        return $this->belongsTo(Location::class, 'to_location_id');
     }
 
-    public function performedBy(): BelongsTo
+    public function performedBy()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'performed_by');
     }
 }

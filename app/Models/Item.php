@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\ItemStatus;
+use App\Enums\ItemCondition;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Item extends Model
 {
@@ -48,6 +50,8 @@ class Item extends Model
             'warranty_expired_at' => 'date',
             'location_id' => 'integer',
             'category_id' => 'integer',
+            'condition' => ItemCondition::class,
+            'status' => ItemStatus::class,
         ];
     }
 
