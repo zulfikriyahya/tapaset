@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use App\Enums\ItemCondition;
-use App\Enums\LoanStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Loan extends Model
@@ -54,33 +53,31 @@ class Loan extends Model
             'approved_by' => 'integer',
             'penalty_amount' => 'decimal:2',
             'is_paid' => 'boolean',
-            'status' => LoanStatus::class,
-            'returned_condition' => ItemCondition::class,
         ];
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function item()
+    public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class);
     }
 
-    public function createdBy()
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class);
     }
 
-    public function returnedBy()
+    public function returnedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'returned_by');
+        return $this->belongsTo(User::class);
     }
 
-    public function approvedBy()
+    public function approvedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class);
     }
 }
