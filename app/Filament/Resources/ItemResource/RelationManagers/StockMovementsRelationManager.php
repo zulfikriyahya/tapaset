@@ -1,15 +1,15 @@
 <?php
+
 // app/Filament/Resources/ItemResource/RelationManagers/StockMovementsRelationManager.php
 
 namespace App\Filament\Resources\ItemResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Tables;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Resources\RelationManagers\RelationManager;
 
 class StockMovementsRelationManager extends RelationManager
 {
@@ -47,8 +47,7 @@ class StockMovementsRelationManager extends RelationManager
                     ->searchable()
                     ->preload()
                     ->visible(
-                        fn(Forms\Get $get): bool =>
-                        in_array($get('movement_type'), ['out', 'transfer'])
+                        fn (Forms\Get $get): bool => in_array($get('movement_type'), ['out', 'transfer'])
                     ),
 
                 Forms\Components\Select::make('to_location_id')
@@ -57,8 +56,7 @@ class StockMovementsRelationManager extends RelationManager
                     ->searchable()
                     ->preload()
                     ->visible(
-                        fn(Forms\Get $get): bool =>
-                        in_array($get('movement_type'), ['in', 'transfer'])
+                        fn (Forms\Get $get): bool => in_array($get('movement_type'), ['in', 'transfer'])
                     ),
 
                 Forms\Components\TextInput::make('reference_number')
@@ -94,14 +92,14 @@ class StockMovementsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('movement_type')
                     ->label('Jenis')
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'in' => 'Masuk',
                         'out' => 'Keluar',
                         'adjustment' => 'Penyesuaian',
                         'transfer' => 'Transfer',
                         default => $state,
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'in' => 'success',
                         'out' => 'danger',
                         'adjustment' => 'warning',

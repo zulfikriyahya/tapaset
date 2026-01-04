@@ -1,19 +1,20 @@
 <?php
+
 // app/Filament/Widgets/LowStockAlert.php
 
 namespace App\Filament\Widgets;
 
 use App\Models\Item;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Support\Enums\FontWeight;
 use Filament\Widgets\TableWidget as BaseWidget;
 
 class LowStockAlert extends BaseWidget
 {
     protected static ?int $sort = 4;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected static ?string $heading = '⚠️ Alert Stok Rendah';
 
@@ -44,8 +45,7 @@ class LowStockAlert extends BaseWidget
                     ->label('Nama Barang')
                     ->searchable()
                     ->description(
-                        fn(Item $record): string =>
-                        $record->category->name . ' - ' . $record->location->name
+                        fn (Item $record): string => $record->category->name.' - '.$record->location->name
                     ),
 
                 Tables\Columns\TextColumn::make('quantity')
@@ -64,7 +64,7 @@ class LowStockAlert extends BaseWidget
 
                 Tables\Columns\TextColumn::make('difference')
                     ->label('Kekurangan')
-                    ->state(fn(Item $record): int => $record->min_quantity - $record->quantity)
+                    ->state(fn (Item $record): int => $record->min_quantity - $record->quantity)
                     ->numeric()
                     ->alignCenter()
                     ->badge()
@@ -88,10 +88,9 @@ class LowStockAlert extends BaseWidget
                     ->icon('heroicon-o-arrow-up-tray')
                     ->color('success')
                     ->url(
-                        fn(Item $record): string =>
-                        route('filament.admin.resources.stock-movements.create', [
+                        fn (Item $record): string => route('filament.admin.resources.stock-movements.create', [
                             'item_id' => $record->id,
-                            'movement_type' => 'in'
+                            'movement_type' => 'in',
                         ])
                     ),
             ])

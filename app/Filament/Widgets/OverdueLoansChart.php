@@ -1,10 +1,11 @@
 <?php
+
 // app/Filament/Widgets/OverdueLoansChart.php
 
 namespace App\Filament\Widgets;
 
-use App\Models\Loan;
 use App\Enums\LoanStatus;
+use App\Models\Loan;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +25,7 @@ class OverdueLoansChart extends ChartWidget
         $data = Loan::select(
             DB::raw('DATE(created_at) as date'),
             DB::raw('COUNT(*) as total'),
-            DB::raw('SUM(CASE WHEN status = "' . LoanStatus::ACTIVE->value . '" AND due_date < NOW() THEN 1 ELSE 0 END) as overdue')
+            DB::raw('SUM(CASE WHEN status = "'.LoanStatus::ACTIVE->value.'" AND due_date < NOW() THEN 1 ELSE 0 END) as overdue')
         )
             ->where('created_at', '>=', now()->subDays(30))
             ->groupBy('date')

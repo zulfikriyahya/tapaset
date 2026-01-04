@@ -1,19 +1,20 @@
 <?php
+
 // app/Filament/Resources/RfidCardResource.php
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\RfidCard;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Illuminate\Support\Collection;
-use Filament\Support\Enums\FontWeight;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\RfidCardResource\Pages;
+use App\Models\RfidCard;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 
 class RfidCardResource extends Resource
 {
@@ -55,7 +56,7 @@ class RfidCardResource extends Resource
                             ->label('Pemilik Kartu')
                             ->relationship('user', 'name')
                             ->searchable(['name', 'identity_number', 'email'])
-                            ->getOptionLabelFromRecordUsing(fn($record) => "{$record->name} ({$record->identity_number})")
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name} ({$record->identity_number})")
                             ->preload()
                             ->nullable()
                             ->helperText('Kosongkan jika kartu belum di-assign'),
@@ -136,11 +137,10 @@ class RfidCardResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->description(
-                        fn(RfidCard $record): string =>
-                        $record->user ? "{$record->user->identity_number} - {$record->user->role->label()}" : 'Belum di-assign'
+                        fn (RfidCard $record): string => $record->user ? "{$record->user->identity_number} - {$record->user->role->label()}" : 'Belum di-assign'
                     )
                     ->placeholder('Belum di-assign')
-                    ->color(fn(RfidCard $record): string => $record->user ? 'success' : 'gray'),
+                    ->color(fn (RfidCard $record): string => $record->user ? 'success' : 'gray'),
 
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Status')
@@ -163,8 +163,7 @@ class RfidCardResource extends Resource
                     ->sortable()
                     ->placeholder('Tidak terbatas')
                     ->color(
-                        fn(RfidCard $record): string =>
-                        $record->expired_at && $record->expired_at < now() ? 'danger' : 'success'
+                        fn (RfidCard $record): string => $record->expired_at && $record->expired_at < now() ? 'danger' : 'success'
                     )
                     ->toggleable(),
 
@@ -181,8 +180,7 @@ class RfidCardResource extends Resource
                     ->sortable()
                     ->alignCenter()
                     ->color(
-                        fn(RfidCard $record): string =>
-                        $record->failed_attempts > 5 ? 'danger' : ($record->failed_attempts > 0 ? 'warning' : 'success')
+                        fn (RfidCard $record): string => $record->failed_attempts > 5 ? 'danger' : ($record->failed_attempts > 0 ? 'warning' : 'success')
                     )
                     ->toggleable(isToggledHiddenByDefault: true),
 
@@ -211,15 +209,14 @@ class RfidCardResource extends Resource
                     ->trueLabel('Sudah di-assign')
                     ->falseLabel('Belum di-assign')
                     ->queries(
-                        true: fn(Builder $query) => $query->whereNotNull('user_id'),
-                        false: fn(Builder $query) => $query->whereNull('user_id'),
+                        true: fn (Builder $query) => $query->whereNotNull('user_id'),
+                        false: fn (Builder $query) => $query->whereNull('user_id'),
                     ),
 
                 Tables\Filters\Filter::make('expired')
                     ->label('Kadaluarsa')
                     ->query(
-                        fn(Builder $query): Builder =>
-                        $query->whereNotNull('expired_at')
+                        fn (Builder $query): Builder => $query->whereNotNull('expired_at')
                             ->where('expired_at', '<', now())
                     )
                     ->toggle(),
@@ -227,8 +224,7 @@ class RfidCardResource extends Resource
                 Tables\Filters\Filter::make('suspicious')
                     ->label('Aktivitas Mencurigakan')
                     ->query(
-                        fn(Builder $query): Builder =>
-                        $query->where('failed_attempts', '>', 5)
+                        fn (Builder $query): Builder => $query->where('failed_attempts', '>', 5)
                     )
                     ->toggle(),
 
@@ -242,15 +238,14 @@ class RfidCardResource extends Resource
                     ->label('Assign User')
                     ->icon('heroicon-o-user-plus')
                     ->color('info')
-                    ->visible(fn(RfidCard $record): bool => !$record->user_id)
+                    ->visible(fn (RfidCard $record): bool => ! $record->user_id)
                     ->form([
                         Forms\Components\Select::make('user_id')
                             ->label('Pilih User')
                             ->relationship('user', 'name')
                             ->searchable(['name', 'identity_number', 'email'])
                             ->getOptionLabelFromRecordUsing(
-                                fn($record) =>
-                                "{$record->name} ({$record->identity_number}) - {$record->role->label()}"
+                                fn ($record) => "{$record->name} ({$record->identity_number}) - {$record->role->label()}"
                             )
                             ->required()
                             ->preload(),
@@ -263,7 +258,7 @@ class RfidCardResource extends Resource
                     ->label('Lepas User')
                     ->icon('heroicon-o-user-minus')
                     ->color('warning')
-                    ->visible(fn(RfidCard $record): bool => $record->user_id !== null)
+                    ->visible(fn (RfidCard $record): bool => $record->user_id !== null)
                     ->requiresConfirmation()
                     ->modalHeading('Lepas User dari Kartu')
                     ->modalDescription('Apakah Anda yakin ingin melepas user dari kartu ini?')
@@ -275,7 +270,7 @@ class RfidCardResource extends Resource
                     ->label('Reset Counter')
                     ->icon('heroicon-o-arrow-path')
                     ->color('success')
-                    ->visible(fn(RfidCard $record): bool => $record->failed_attempts > 0)
+                    ->visible(fn (RfidCard $record): bool => $record->failed_attempts > 0)
                     ->requiresConfirmation()
                     ->action(function (RfidCard $record): void {
                         $record->update(['failed_attempts' => 0]);
@@ -290,14 +285,14 @@ class RfidCardResource extends Resource
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
-                        ->action(fn(Collection $records) => $records->each->update(['is_active' => true])),
+                        ->action(fn (Collection $records) => $records->each->update(['is_active' => true])),
 
                     Tables\Actions\BulkAction::make('deactivate')
                         ->label('Nonaktifkan')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->action(fn(Collection $records) => $records->each->update(['is_active' => false])),
+                        ->action(fn (Collection $records) => $records->each->update(['is_active' => false])),
 
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),

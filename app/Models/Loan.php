@@ -1,15 +1,16 @@
 <?php
+
 // app/Models/Loan.php
 
 namespace App\Models;
 
-use App\Enums\LoanStatus;
 use App\Enums\ItemCondition;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Enums\LoanStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Loan extends Model
 {
@@ -82,7 +83,7 @@ class Loan extends Model
 
     public function getDaysLateAttribute(): int
     {
-        if (!$this->isOverdue()) {
+        if (! $this->isOverdue()) {
             return 0;
         }
 

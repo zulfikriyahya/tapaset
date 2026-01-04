@@ -1,16 +1,17 @@
 <?php
+
 // app/Filament/Resources/RfidLogResource.php
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\RfidLog;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\RfidLogResource\Pages;
+use App\Models\RfidLog;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class RfidLogResource extends Resource
 {
@@ -78,22 +79,21 @@ class RfidLogResource extends Resource
                     ->label('User')
                     ->searchable()
                     ->description(
-                        fn(RfidLog $record): string =>
-                        $record->user ? $record->user->identity_number : '-'
+                        fn (RfidLog $record): string => $record->user ? $record->user->identity_number : '-'
                     )
                     ->placeholder('Unknown'),
 
                 Tables\Columns\TextColumn::make('action')
                     ->label('Aksi')
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'tap' => 'Tap',
                         'loan' => 'Pinjam',
                         'return' => 'Kembali',
                         'failed' => 'Gagal',
                         default => $state,
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'tap' => 'gray',
                         'loan' => 'info',
                         'return' => 'success',
@@ -105,13 +105,13 @@ class RfidLogResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'success' => 'Sukses',
                         'failed' => 'Gagal',
                         'suspended' => 'Suspended',
                         default => $state,
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'success' => 'success',
                         'failed' => 'danger',
                         'suspended' => 'warning',
@@ -179,11 +179,11 @@ class RfidLogResource extends Resource
                         return $query
                             ->when(
                                 $data['from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
             ])

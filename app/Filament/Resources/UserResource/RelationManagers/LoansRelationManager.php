@@ -1,16 +1,17 @@
 <?php
+
 // app/Filament/Resources/UserResource/RelationManagers/LoansRelationManager.php
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
 use App\Enums\LoanStatus;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Resources\RelationManagers\RelationManager;
 
 class LoansRelationManager extends RelationManager
 {
@@ -43,7 +44,7 @@ class LoansRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('item.name')
                     ->label('Barang')
                     ->searchable()
-                    ->description(fn($record): string => $record->item->item_code),
+                    ->description(fn ($record): string => $record->item->item_code),
 
                 Tables\Columns\TextColumn::make('loan_date')
                     ->label('Tgl Pinjam')
@@ -55,15 +56,13 @@ class LoansRelationManager extends RelationManager
                     ->dateTime('d/m/Y')
                     ->sortable()
                     ->color(
-                        fn($record): string =>
-                        $record->status === LoanStatus::ACTIVE && $record->due_date < now()
+                        fn ($record): string => $record->status === LoanStatus::ACTIVE && $record->due_date < now()
                             ? 'danger'
                             : 'gray'
                     )
                     ->description(
-                        fn($record): string =>
-                        $record->status === LoanStatus::ACTIVE && $record->due_date < now()
-                            ? 'Terlambat ' . now()->diffInDays($record->due_date) . ' hari'
+                        fn ($record): string => $record->status === LoanStatus::ACTIVE && $record->due_date < now()
+                            ? 'Terlambat '.now()->diffInDays($record->due_date).' hari'
                             : ''
                     ),
 
@@ -81,8 +80,7 @@ class LoansRelationManager extends RelationManager
                     ->label('Denda')
                     ->money('IDR')
                     ->color(
-                        fn($record): string =>
-                        $record->penalty_amount > 0 && !$record->is_paid ? 'danger' : 'success'
+                        fn ($record): string => $record->penalty_amount > 0 && ! $record->is_paid ? 'danger' : 'success'
                     ),
 
                 Tables\Columns\IconColumn::make('is_paid')
@@ -101,8 +99,7 @@ class LoansRelationManager extends RelationManager
                 Tables\Filters\Filter::make('overdue')
                     ->label('Terlambat')
                     ->query(
-                        fn(Builder $query): Builder =>
-                        $query->where('status', LoanStatus::ACTIVE)
+                        fn (Builder $query): Builder => $query->where('status', LoanStatus::ACTIVE)
                             ->where('due_date', '<', now())
                     )
                     ->toggle(),
@@ -121,7 +118,7 @@ class LoansRelationManager extends RelationManager
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
+            ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
             ->defaultSort('loan_date', 'desc')

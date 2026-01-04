@@ -1,20 +1,21 @@
 <?php
+
 // app/Filament/Resources/UserResource.php
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use App\Models\User;
-use Filament\Tables;
 use App\Enums\UserRole;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\User;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
@@ -53,9 +54,9 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('password')
                             ->label('Password')
                             ->password()
-                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                            ->dehydrated(fn($state) => filled($state))
-                            ->required(fn(string $operation): bool => $operation === 'create')
+                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->required(fn (string $operation): bool => $operation === 'create')
                             ->maxLength(255)
                             ->revealable(),
                     ])
@@ -95,7 +96,7 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('class')
                             ->label('Kelas')
                             ->maxLength(255)
-                            ->visible(fn(Forms\Get $get): bool => $get('role') === UserRole::STUDENT->value)
+                            ->visible(fn (Forms\Get $get): bool => $get('role') === UserRole::STUDENT->value)
                             ->helperText('Contoh: X IPA 1'),
                     ])
                     ->columns(2),
@@ -135,13 +136,13 @@ class UserResource extends Resource
                             ->native(false)
                             ->displayFormat('d/m/Y H:i')
                             ->seconds(false)
-                            ->visible(fn(Forms\Get $get): bool => $get('is_suspended'))
+                            ->visible(fn (Forms\Get $get): bool => $get('is_suspended'))
                             ->helperText('Kosongkan untuk suspend permanent'),
 
                         Forms\Components\Textarea::make('suspension_reason')
                             ->label('Alasan Suspend')
                             ->rows(3)
-                            ->visible(fn(Forms\Get $get): bool => $get('is_suspended'))
+                            ->visible(fn (Forms\Get $get): bool => $get('is_suspended'))
                             ->columnSpanFull(),
                     ])
                     ->columns(2)
@@ -163,7 +164,7 @@ class UserResource extends Resource
                     ->label('Nama')
                     ->searchable()
                     ->sortable()
-                    ->description(fn(User $record): string => $record->email),
+                    ->description(fn (User $record): string => $record->email),
 
                 Tables\Columns\TextColumn::make('role')
                     ->label('Role')
@@ -196,15 +197,14 @@ class UserResource extends Resource
                     ->trueColor('success')
                     ->falseColor('gray')
                     ->default(false)
-                    ->getStateUsing(fn(User $record): bool => $record->rfidCard !== null && $record->rfidCard->is_active),
+                    ->getStateUsing(fn (User $record): bool => $record->rfidCard !== null && $record->rfidCard->is_active),
 
                 Tables\Columns\TextColumn::make('active_loans_count')
                     ->label('Pinjaman Aktif')
-                    ->counts('loans', fn(Builder $query) => $query->where('status', \App\Enums\LoanStatus::ACTIVE))
+                    ->counts('loans', fn (Builder $query) => $query->where('status', \App\Enums\LoanStatus::ACTIVE))
                     ->badge()
                     ->color(
-                        fn(int $state, User $record): string =>
-                        $state >= $record->max_loan_items ? 'danger' : ($state > 0 ? 'warning' : 'success')
+                        fn (int $state, User $record): string => $state >= $record->max_loan_items ? 'danger' : ($state > 0 ? 'warning' : 'success')
                     )
                     ->sortable(),
 
@@ -238,14 +238,13 @@ class UserResource extends Resource
 
                 Tables\Filters\Filter::make('has_rfid')
                     ->label('Punya Kartu RFID')
-                    ->query(fn(Builder $query): Builder => $query->has('rfidCard'))
+                    ->query(fn (Builder $query): Builder => $query->has('rfidCard'))
                     ->toggle(),
 
                 Tables\Filters\Filter::make('has_active_loans')
                     ->label('Punya Pinjaman Aktif')
                     ->query(
-                        fn(Builder $query): Builder =>
-                        $query->whereHas('loans', fn($q) => $q->where('status', \App\Enums\LoanStatus::ACTIVE))
+                        fn (Builder $query): Builder => $query->whereHas('loans', fn ($q) => $q->where('status', \App\Enums\LoanStatus::ACTIVE))
                     )
                     ->toggle(),
 
@@ -259,7 +258,7 @@ class UserResource extends Resource
                     ->label('Suspend')
                     ->icon('heroicon-o-no-symbol')
                     ->color('danger')
-                    ->visible(fn(User $record): bool => !$record->is_suspended)
+                    ->visible(fn (User $record): bool => ! $record->is_suspended)
                     ->form([
                         Forms\Components\DateTimePicker::make('suspended_until')
                             ->label('Suspend Hingga')
@@ -284,7 +283,7 @@ class UserResource extends Resource
                     ->label('Aktifkan')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn(User $record): bool => $record->is_suspended)
+                    ->visible(fn (User $record): bool => $record->is_suspended)
                     ->requiresConfirmation()
                     ->action(function (User $record): void {
                         $record->update([
@@ -339,6 +338,7 @@ class UserResource extends Resource
     public static function getNavigationBadgeColor(): ?string
     {
         $count = static::getModel()::where('is_suspended', true)->count();
+
         return $count > 0 ? 'danger' : null;
     }
 }

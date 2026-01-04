@@ -1,17 +1,18 @@
 <?php
+
 // app/Filament/Resources/LocationResource.php
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\Resources\LocationResource\Pages;
 use App\Models\Location;
+use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
+use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\LocationResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class LocationResource extends Resource
@@ -79,7 +80,7 @@ class LocationResource extends Resource
                     ->label('Nama Lokasi')
                     ->searchable()
                     ->sortable()
-                    ->description(fn(Location $record): string => $record->description ?? ''),
+                    ->description(fn (Location $record): string => $record->description ?? ''),
 
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Status')
@@ -100,7 +101,7 @@ class LocationResource extends Resource
                 Tables\Columns\TextColumn::make('available_items_count')
                     ->label('Barang Tersedia')
                     ->counts([
-                        'items' => fn(Builder $query) => $query->where('status', \App\Enums\ItemStatus::AVAILABLE)
+                        'items' => fn (Builder $query) => $query->where('status', \App\Enums\ItemStatus::AVAILABLE),
                     ])
                     ->badge()
                     ->color('success')

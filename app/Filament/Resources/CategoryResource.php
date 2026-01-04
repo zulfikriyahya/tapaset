@@ -1,19 +1,20 @@
 <?php
+
 // app/Filament/Resources/CategoryResource.php
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\Resources\CategoryResource\Pages;
 use App\Models\Category;
+use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
+use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\CategoryResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class CategoryResource extends Resource
 {
@@ -43,8 +44,7 @@ class CategoryResource extends Resource
                             ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(
-                                fn(Forms\Set $set, ?string $state) =>
-                                $set('slug', Str::slug($state))
+                                fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))
                             ),
 
                         Forms\Components\TextInput::make('slug')
@@ -64,7 +64,7 @@ class CategoryResource extends Resource
                             ->label('Stok Minimum Default')
                             ->numeric()
                             ->minValue(0)
-                            ->visible(fn(Forms\Get $get): bool => $get('is_consumable'))
+                            ->visible(fn (Forms\Get $get): bool => $get('is_consumable'))
                             ->helperText('Stok minimum untuk semua item dalam kategori ini'),
 
                         Forms\Components\Textarea::make('description')

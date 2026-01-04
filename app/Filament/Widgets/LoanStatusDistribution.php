@@ -1,10 +1,11 @@
 <?php
+
 // app/Filament/Widgets/LoanStatusDistribution.php
 
 namespace App\Filament\Widgets;
 
-use App\Models\Loan;
 use App\Enums\LoanStatus;
+use App\Models\Loan;
 use Filament\Widgets\ChartWidget;
 
 class LoanStatusDistribution extends ChartWidget

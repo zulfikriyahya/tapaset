@@ -1,16 +1,17 @@
 <?php
+
 // app/Filament/Resources/ItemResource/RelationManagers/MaintenanceHistoriesRelationManager.php
 
 namespace App\Filament\Resources\ItemResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Tables;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Resources\RelationManagers\RelationManager;
+use Illuminate\Support\Facades\Auth;
 
 class MaintenanceHistoriesRelationManager extends RelationManager
 {
@@ -91,7 +92,7 @@ class MaintenanceHistoriesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('maintenance_type')
                     ->label('Jenis')
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'repair' => 'Perbaikan',
                         'service' => 'Servis',
                         'inspection' => 'Inspeksi',
@@ -99,7 +100,7 @@ class MaintenanceHistoriesRelationManager extends RelationManager
                         'calibration' => 'Kalibrasi',
                         default => $state,
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'repair' => 'danger',
                         'service' => 'info',
                         'inspection' => 'warning',
@@ -113,14 +114,14 @@ class MaintenanceHistoriesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'pending' => 'Pending',
                         'in_progress' => 'Dikerjakan',
                         'completed' => 'Selesai',
                         'cancelled' => 'Dibatalkan',
                         default => $state,
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'pending' => 'warning',
                         'in_progress' => 'info',
                         'completed' => 'success',
@@ -178,7 +179,7 @@ class MaintenanceHistoriesRelationManager extends RelationManager
                     Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
+            ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
             ->defaultSort('performed_at', 'desc');

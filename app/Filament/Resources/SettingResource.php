@@ -1,17 +1,17 @@
 <?php
+
 // app/Filament/Resources/SettingResource.php
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\Resources\SettingResource\Pages;
 use App\Models\Setting;
+use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\SettingResource\Pages;
+use Filament\Tables;
+use Filament\Tables\Table;
 
 class SettingResource extends Resource
 {
@@ -41,7 +41,7 @@ class SettingResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
                             ->helperText('Unique identifier untuk setting')
-                            ->disabled(fn(string $operation): bool => $operation === 'edit'),
+                            ->disabled(fn (string $operation): bool => $operation === 'edit'),
 
                         Forms\Components\Select::make('group')
                             ->label('Grup')
@@ -78,42 +78,41 @@ class SettingResource extends Resource
                             ->label('Nilai')
                             ->maxLength(255)
                             ->visible(
-                                fn(Forms\Get $get): bool =>
-                                in_array($get('type'), ['string', null])
+                                fn (Forms\Get $get): bool => in_array($get('type'), ['string', null])
                             ),
 
                         // Integer input
                         Forms\Components\TextInput::make('value')
                             ->label('Nilai')
                             ->numeric()
-                            ->visible(fn(Forms\Get $get): bool => $get('type') === 'integer'),
+                            ->visible(fn (Forms\Get $get): bool => $get('type') === 'integer'),
 
                         // Decimal input
                         Forms\Components\TextInput::make('value')
                             ->label('Nilai')
                             ->numeric()
                             ->inputMode('decimal')
-                            ->visible(fn(Forms\Get $get): bool => $get('type') === 'decimal'),
+                            ->visible(fn (Forms\Get $get): bool => $get('type') === 'decimal'),
 
                         // Boolean input
                         Forms\Components\Toggle::make('value')
                             ->label('Nilai')
                             ->onColor('success')
                             ->offColor('danger')
-                            ->visible(fn(Forms\Get $get): bool => $get('type') === 'boolean')
+                            ->visible(fn (Forms\Get $get): bool => $get('type') === 'boolean')
                             ->afterStateHydrated(function (Forms\Components\Toggle $component, $state) {
                                 // Convert string 'true'/'false' to boolean
                                 if (is_string($state)) {
                                     $component->state($state === 'true' || $state === '1');
                                 }
                             })
-                            ->dehydrateStateUsing(fn($state) => $state ? 'true' : 'false'),
+                            ->dehydrateStateUsing(fn ($state) => $state ? 'true' : 'false'),
 
                         // JSON input
                         Forms\Components\Textarea::make('value')
                             ->label('Nilai JSON')
                             ->rows(5)
-                            ->visible(fn(Forms\Get $get): bool => $get('type') === 'json')
+                            ->visible(fn (Forms\Get $get): bool => $get('type') === 'json')
                             ->helperText('Format JSON valid'),
 
                         Forms\Components\Toggle::make('is_public')
@@ -141,7 +140,7 @@ class SettingResource extends Resource
                 Tables\Columns\TextColumn::make('group')
                     ->label('Grup')
                     ->badge()
-                    ->formatStateUsing(fn(?string $state): string => match ($state) {
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
                         'general' => 'Umum',
                         'loan' => 'Peminjaman',
                         'penalty' => 'Denda',
@@ -149,7 +148,7 @@ class SettingResource extends Resource
                         'system' => 'Sistem',
                         default => $state ?? 'Lainnya',
                     })
-                    ->color(fn(?string $state): string => match ($state) {
+                    ->color(fn (?string $state): string => match ($state) {
                         'general' => 'gray',
                         'loan' => 'info',
                         'penalty' => 'danger',
@@ -176,15 +175,16 @@ class SettingResource extends Resource
                             return $state === 'true' || $state === '1' ? '✓ Ya' : '✗ Tidak';
                         }
                         if ($record->type === 'json') {
-                            return substr($state, 0, 40) . (strlen($state) > 40 ? '...' : '');
+                            return substr($state, 0, 40).(strlen($state) > 40 ? '...' : '');
                         }
+
                         return $state;
                     }),
 
                 Tables\Columns\TextColumn::make('type')
                     ->label('Tipe')
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'string' => 'String',
                         'integer' => 'Integer',
                         'boolean' => 'Boolean',
@@ -249,8 +249,7 @@ class SettingResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->visible(
-                        fn(Setting $record): bool =>
-                        !in_array($record->key, [
+                        fn (Setting $record): bool => ! in_array($record->key, [
                             'loan_duration_days',
                             'penalty_per_day',
                             'max_loan_items_student',

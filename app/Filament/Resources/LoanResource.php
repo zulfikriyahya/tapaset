@@ -1,28 +1,29 @@
 <?php
+
 // app/Filament/Resources/LoanResource.php
 
 namespace App\Filament\Resources;
 
-use Carbon\Carbon;
-use Filament\Forms;
-use App\Models\Item;
-use App\Models\Loan;
-use Filament\Tables;
-use App\Models\Setting;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
+use App\Enums\ItemCondition;
 use App\Enums\ItemStatus;
 use App\Enums\LoanStatus;
-use Filament\Tables\Table;
-use App\Enums\ItemCondition;
-use Filament\Resources\Resource;
-use Illuminate\Support\Facades\Auth;
-use Filament\Support\Enums\FontWeight;
-use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\LoanResource\Pages;
+use App\Models\Item;
+use App\Models\Loan;
+use App\Models\Setting;
+use Carbon\Carbon;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class LoanResource extends Resource
 {
@@ -48,7 +49,7 @@ class LoanResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('loan_number')
                             ->label('No. Peminjaman')
-                            ->default(fn() => 'LN-' . date('Ymd') . '-' . str_pad(Loan::whereDate('created_at', today())->count() + 1, 4, '0', STR_PAD_LEFT))
+                            ->default(fn () => 'LN-'.date('Ymd').'-'.str_pad(Loan::whereDate('created_at', today())->count() + 1, 4, '0', STR_PAD_LEFT))
                             ->disabled()
                             ->dehydrated()
                             ->required()
@@ -59,7 +60,7 @@ class LoanResource extends Resource
                             ->label('Peminjam')
                             ->relationship('user', 'name')
                             ->searchable(['name', 'identity_number', 'email'])
-                            ->getOptionLabelFromRecordUsing(fn($record) => "{$record->name} - {$record->identity_number}")
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name} - {$record->identity_number}")
                             ->required()
                             ->preload()
                             ->live()
@@ -70,7 +71,7 @@ class LoanResource extends Resource
                                         Notification::make()
                                             ->warning()
                                             ->title('User Disuspend')
-                                            ->body("User ini sedang disuspend hingga " . ($user->suspended_until ? $user->suspended_until->format('d/m/Y') : 'tanpa batas'))
+                                            ->body('User ini sedang disuspend hingga '.($user->suspended_until ? $user->suspended_until->format('d/m/Y') : 'tanpa batas'))
                                             ->persistent()
                                             ->send();
                                     }
@@ -102,7 +103,7 @@ class LoanResource extends Resource
                             ->options(function () {
                                 return Item::where('status', ItemStatus::AVAILABLE)
                                     ->get()
-                                    ->mapWithKeys(fn($item) => [$item->id => "{$item->name} ({$item->item_code})"]);
+                                    ->mapWithKeys(fn ($item) => [$item->id => "{$item->name} ({$item->item_code})"]);
                             })
                             ->searchable()
                             ->required()
@@ -128,7 +129,7 @@ class LoanResource extends Resource
                             ->native(false)
                             ->displayFormat('d/m/Y H:i')
                             ->seconds(false)
-                            ->minDate(fn(Get $get) => $get('loan_date'))
+                            ->minDate(fn (Get $get) => $get('loan_date'))
                             ->helperText('Tanggal maksimal pengembalian'),
 
                         Forms\Components\DateTimePicker::make('return_date')
@@ -136,7 +137,7 @@ class LoanResource extends Resource
                             ->native(false)
                             ->displayFormat('d/m/Y H:i')
                             ->seconds(false)
-                            ->hidden(fn(string $operation): bool => $operation === 'create'),
+                            ->hidden(fn (string $operation): bool => $operation === 'create'),
                     ])
                     ->columns(3),
 
@@ -154,8 +155,8 @@ class LoanResource extends Resource
                             ->label('Kondisi Saat Kembali')
                             ->options(ItemCondition::class)
                             ->native(false)
-                            ->visible(fn(Get $get): bool => in_array($get('status'), [LoanStatus::RETURNED->value, 'returned']))
-                            ->required(fn(Get $get): bool => in_array($get('status'), [LoanStatus::RETURNED->value, 'returned'])),
+                            ->visible(fn (Get $get): bool => in_array($get('status'), [LoanStatus::RETURNED->value, 'returned']))
+                            ->required(fn (Get $get): bool => in_array($get('status'), [LoanStatus::RETURNED->value, 'returned'])),
                     ])
                     ->columns(2),
 
@@ -172,10 +173,10 @@ class LoanResource extends Resource
                         Forms\Components\Toggle::make('is_paid')
                             ->label('Sudah Dibayar?')
                             ->default(false)
-                            ->visible(fn(Get $get): bool => (float) ($get('penalty_amount') ?? 0) > 0),
+                            ->visible(fn (Get $get): bool => (float) ($get('penalty_amount') ?? 0) > 0),
                     ])
                     ->columns(2)
-                    ->visible(fn(string $operation): bool => $operation === 'edit'),
+                    ->visible(fn (string $operation): bool => $operation === 'edit'),
 
                 Forms\Components\Section::make('Catatan')
                     ->schema([
@@ -188,7 +189,7 @@ class LoanResource extends Resource
                             ->label('Catatan Pengembalian')
                             ->rows(2)
                             ->columnSpanFull()
-                            ->hidden(fn(string $operation): bool => $operation === 'create'),
+                            ->hidden(fn (string $operation): bool => $operation === 'create'),
                     ]),
 
                 Forms\Components\Section::make('Audit Trail')
@@ -206,14 +207,14 @@ class LoanResource extends Resource
                             ->relationship('returnedBy', 'name')
                             ->searchable()
                             ->preload()
-                            ->hidden(fn(string $operation): bool => $operation === 'create'),
+                            ->hidden(fn (string $operation): bool => $operation === 'create'),
 
                         Forms\Components\Select::make('approved_by')
                             ->label('Disetujui Oleh')
                             ->relationship('approvedBy', 'name')
                             ->searchable()
                             ->preload()
-                            ->hidden(fn(string $operation): bool => $operation === 'create'),
+                            ->hidden(fn (string $operation): bool => $operation === 'create'),
                     ])
                     ->columns(3)
                     ->collapsible(),
@@ -235,13 +236,13 @@ class LoanResource extends Resource
                     ->label('Peminjam')
                     ->searchable()
                     ->sortable()
-                    ->description(fn(Loan $record): string => $record->user->identity_number ?? '-'),
+                    ->description(fn (Loan $record): string => $record->user->identity_number ?? '-'),
 
                 Tables\Columns\TextColumn::make('item.name')
                     ->label('Barang')
                     ->searchable()
                     ->sortable()
-                    ->description(fn(Loan $record): string => $record->item->item_code ?? '-')
+                    ->description(fn (Loan $record): string => $record->item->item_code ?? '-')
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make('loan_date')
@@ -254,15 +255,13 @@ class LoanResource extends Resource
                     ->dateTime('d/m/Y')
                     ->sortable()
                     ->color(
-                        fn(Loan $record): string =>
-                        $record->status === LoanStatus::ACTIVE && $record->due_date < now()
+                        fn (Loan $record): string => $record->status === LoanStatus::ACTIVE && $record->due_date < now()
                             ? 'danger'
                             : 'gray'
                     )
                     ->description(
-                        fn(Loan $record): ?string =>
-                        $record->status === LoanStatus::ACTIVE && $record->due_date < now()
-                            ? 'Terlambat ' . now()->diffInDays($record->due_date) . ' hari'
+                        fn (Loan $record): ?string => $record->status === LoanStatus::ACTIVE && $record->due_date < now()
+                            ? 'Terlambat '.now()->diffInDays($record->due_date).' hari'
                             : null
                     ),
 
@@ -282,8 +281,7 @@ class LoanResource extends Resource
                     ->money('IDR')
                     ->sortable()
                     ->color(
-                        fn(Loan $record): string =>
-                        $record->penalty_amount > 0 && !$record->is_paid ? 'danger' : 'success'
+                        fn (Loan $record): string => $record->penalty_amount > 0 && ! $record->is_paid ? 'danger' : 'success'
                     )
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
@@ -319,8 +317,7 @@ class LoanResource extends Resource
                 Tables\Filters\Filter::make('overdue')
                     ->label('Terlambat')
                     ->query(
-                        fn(Builder $query): Builder =>
-                        $query->where('status', LoanStatus::ACTIVE)
+                        fn (Builder $query): Builder => $query->where('status', LoanStatus::ACTIVE)
                             ->where('due_date', '<', now())
                     )
                     ->toggle(),
@@ -328,8 +325,7 @@ class LoanResource extends Resource
                 Tables\Filters\Filter::make('unpaid_penalty')
                     ->label('Denda Belum Lunas')
                     ->query(
-                        fn(Builder $query): Builder =>
-                        $query->where('penalty_amount', '>', 0)
+                        fn (Builder $query): Builder => $query->where('penalty_amount', '>', 0)
                             ->where('is_paid', false)
                     )
                     ->toggle(),
@@ -345,11 +341,11 @@ class LoanResource extends Resource
                         return $query
                             ->when(
                                 $data['from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('loan_date', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('loan_date', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('loan_date', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('loan_date', '<=', $date),
                             );
                     }),
 
@@ -363,7 +359,7 @@ class LoanResource extends Resource
                     ->label('Kembalikan')
                     ->icon('heroicon-o-arrow-uturn-left')
                     ->color('success')
-                    ->visible(fn(Loan $record): bool => $record->status === LoanStatus::ACTIVE)
+                    ->visible(fn (Loan $record): bool => $record->status === LoanStatus::ACTIVE)
                     ->form([
                         Forms\Components\DateTimePicker::make('return_date')
                             ->label('Tanggal Kembali')
@@ -413,7 +409,7 @@ class LoanResource extends Resource
                             ->title('Barang Berhasil Dikembalikan')
                             ->body(
                                 $penaltyAmount > 0
-                                    ? "Denda keterlambatan: Rp " . number_format($penaltyAmount, 0, ',', '.')
+                                    ? 'Denda keterlambatan: Rp '.number_format($penaltyAmount, 0, ',', '.')
                                     : 'Tidak ada denda'
                             )
                             ->send();
@@ -424,12 +420,11 @@ class LoanResource extends Resource
                     ->label('Tandai Lunas')
                     ->icon('heroicon-o-currency-dollar')
                     ->color('warning')
-                    ->visible(fn(Loan $record): bool => $record->penalty_amount > 0 && !$record->is_paid)
+                    ->visible(fn (Loan $record): bool => $record->penalty_amount > 0 && ! $record->is_paid)
                     ->requiresConfirmation()
                     ->modalHeading('Konfirmasi Pembayaran Denda')
                     ->modalDescription(
-                        fn(Loan $record): string =>
-                        'Apakah denda sebesar Rp ' . number_format($record->penalty_amount, 0, ',', '.') . ' sudah dibayar?'
+                        fn (Loan $record): string => 'Apakah denda sebesar Rp '.number_format($record->penalty_amount, 0, ',', '.').' sudah dibayar?'
                     )
                     ->action(function (Loan $record): void {
                         $record->update(['is_paid' => true]);

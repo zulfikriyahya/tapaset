@@ -1,16 +1,17 @@
 <?php
+
 // app/Filament/Resources/ItemResource/RelationManagers/LoansRelationManager.php
 
 namespace App\Filament\Resources\ItemResource\RelationManagers;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
 use App\Enums\LoanStatus;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Resources\RelationManagers\RelationManager;
 
 class LoansRelationManager extends RelationManager
 {
@@ -44,7 +45,7 @@ class LoansRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Peminjam')
                     ->searchable()
-                    ->description(fn($record): string => $record->user->identity_number ?? ''),
+                    ->description(fn ($record): string => $record->user->identity_number ?? ''),
 
                 Tables\Columns\TextColumn::make('loan_date')
                     ->label('Tgl Pinjam')
@@ -56,8 +57,7 @@ class LoansRelationManager extends RelationManager
                     ->dateTime('d/m/Y')
                     ->sortable()
                     ->color(
-                        fn($record): string =>
-                        $record->status === LoanStatus::ACTIVE && $record->due_date < now()
+                        fn ($record): string => $record->status === LoanStatus::ACTIVE && $record->due_date < now()
                             ? 'danger'
                             : 'gray'
                     ),
@@ -99,7 +99,7 @@ class LoansRelationManager extends RelationManager
                     Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
+            ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
             ->defaultSort('loan_date', 'desc');

@@ -1,18 +1,18 @@
 <?php
+
 // app/Filament/Widgets/StatsOverview.php
 
 namespace App\Filament\Widgets;
 
-use App\Models\Item;
-use App\Models\Loan;
-use App\Models\User;
-use App\Models\RfidCard;
 use App\Enums\ItemStatus;
 use App\Enums\LoanStatus;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use App\Models\Item;
+use App\Models\Loan;
+use App\Models\RfidCard;
+use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
 
 class StatsOverview extends BaseWidget
 {
@@ -91,7 +91,7 @@ class StatsOverview extends BaseWidget
                         ->color('info')
                         ->url(route('filament.admin.resources.rfid-cards.index')),
 
-                    Stat::make('Denda Belum Lunas', 'Rp ' . number_format($unpaidPenalties, 0, ',', '.'))
+                    Stat::make('Denda Belum Lunas', 'Rp '.number_format($unpaidPenalties, 0, ',', '.'))
                         ->description('Total denda keterlambatan')
                         ->descriptionIcon('heroicon-m-currency-dollar')
                         ->color($unpaidPenalties > 0 ? 'danger' : 'success')

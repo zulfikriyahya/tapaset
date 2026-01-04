@@ -1,23 +1,22 @@
 <?php
+
 // app/Filament/Resources/ItemResource.php
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use App\Models\Item;
-use Filament\Tables;
-use Filament\Forms\Form;
-use App\Enums\ItemStatus;
-use Filament\Tables\Table;
 use App\Enums\ItemCondition;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Resource;
-use Filament\Infolists\Components;
-use Filament\Support\Enums\FontWeight;
-use Illuminate\Database\Eloquent\Builder;
+use App\Enums\ItemStatus;
 use App\Filament\Resources\ItemResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ItemResource\RelationManagers;
+use App\Models\Item;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemResource extends Resource
 {
@@ -196,7 +195,7 @@ class ItemResource extends Resource
                     ->label('Nama Barang')
                     ->searchable()
                     ->sortable()
-                    ->description(fn(Item $record): string => $record->serial_number ? "SN: {$record->serial_number}" : '')
+                    ->description(fn (Item $record): string => $record->serial_number ? "SN: {$record->serial_number}" : '')
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make('category.name')
@@ -228,8 +227,7 @@ class ItemResource extends Resource
                     ->sortable()
                     ->alignCenter()
                     ->color(
-                        fn(Item $record): string =>
-                        $record->min_quantity && $record->quantity <= $record->min_quantity
+                        fn (Item $record): string => $record->min_quantity && $record->quantity <= $record->min_quantity
                             ? 'danger'
                             : 'success'
                     ),
@@ -281,7 +279,7 @@ class ItemResource extends Resource
 
                 Tables\Filters\Filter::make('low_stock')
                     ->label('Stok Rendah')
-                    ->query(fn(Builder $query): Builder => $query->whereColumn('quantity', '<=', 'min_quantity'))
+                    ->query(fn (Builder $query): Builder => $query->whereColumn('quantity', '<=', 'min_quantity'))
                     ->toggle(),
 
                 Tables\Filters\TrashedFilter::make(),

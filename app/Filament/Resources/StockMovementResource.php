@@ -1,17 +1,18 @@
 <?php
+
 // app/Filament/Resources/StockMovementResource.php
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\StockMovement;
-use Filament\Resources\Resource;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\StockMovementResource\Pages;
+use App\Models\StockMovement;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class StockMovementResource extends Resource
 {
@@ -39,7 +40,7 @@ class StockMovementResource extends Resource
                             ->label('Barang')
                             ->relationship('item', 'name')
                             ->searchable(['name', 'item_code'])
-                            ->getOptionLabelFromRecordUsing(fn($record) => "{$record->name} ({$record->item_code})")
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name} ({$record->item_code})")
                             ->required()
                             ->preload(),
 
@@ -72,8 +73,7 @@ class StockMovementResource extends Resource
                             ->searchable()
                             ->preload()
                             ->visible(
-                                fn(Forms\Get $get): bool =>
-                                in_array($get('movement_type'), ['out', 'transfer'])
+                                fn (Forms\Get $get): bool => in_array($get('movement_type'), ['out', 'transfer'])
                             ),
 
                         Forms\Components\Select::make('to_location_id')
@@ -82,8 +82,7 @@ class StockMovementResource extends Resource
                             ->searchable()
                             ->preload()
                             ->visible(
-                                fn(Forms\Get $get): bool =>
-                                in_array($get('movement_type'), ['in', 'transfer'])
+                                fn (Forms\Get $get): bool => in_array($get('movement_type'), ['in', 'transfer'])
                             ),
                     ])
                     ->columns(2),
@@ -133,26 +132,26 @@ class StockMovementResource extends Resource
                     ->label('Barang')
                     ->searchable()
                     ->sortable()
-                    ->description(fn(StockMovement $record): string => $record->item->item_code),
+                    ->description(fn (StockMovement $record): string => $record->item->item_code),
 
                 Tables\Columns\TextColumn::make('movement_type')
                     ->label('Jenis')
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'in' => 'Masuk',
                         'out' => 'Keluar',
                         'adjustment' => 'Penyesuaian',
                         'transfer' => 'Transfer',
                         default => $state,
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'in' => 'success',
                         'out' => 'danger',
                         'adjustment' => 'warning',
                         'transfer' => 'info',
                         default => 'gray',
                     })
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         'in' => 'heroicon-o-arrow-down-circle',
                         'out' => 'heroicon-o-arrow-up-circle',
                         'adjustment' => 'heroicon-o-pencil-square',
@@ -167,8 +166,7 @@ class StockMovementResource extends Resource
                     ->alignCenter()
                     ->sortable()
                     ->color(
-                        fn(StockMovement $record): string =>
-                        $record->movement_type === 'in' ? 'success' : 'danger'
+                        fn (StockMovement $record): string => $record->movement_type === 'in' ? 'success' : 'danger'
                     ),
 
                 Tables\Columns\TextColumn::make('fromLocation.name')
@@ -238,11 +236,11 @@ class StockMovementResource extends Resource
                         return $query
                             ->when(
                                 $data['from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('performed_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('performed_at', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('performed_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('performed_at', '<=', $date),
                             );
                     }),
             ])

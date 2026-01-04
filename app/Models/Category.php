@@ -1,13 +1,14 @@
 <?php
+
 // app/Models/Category.php
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Category extends Model
 {
@@ -39,7 +40,7 @@ class Category extends Model
                 $count = 1;
 
                 while (static::where('slug', $category->slug)->exists()) {
-                    $category->slug = $originalSlug . '-' . $count;
+                    $category->slug = $originalSlug.'-'.$count;
                     $count++;
                 }
             }
@@ -54,7 +55,7 @@ class Category extends Model
                 $count = 1;
 
                 while (static::where('slug', $category->slug)->where('id', '!=', $category->id)->exists()) {
-                    $category->slug = $originalSlug . '-' . $count;
+                    $category->slug = $originalSlug.'-'.$count;
                     $count++;
                 }
             }

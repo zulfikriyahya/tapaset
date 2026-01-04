@@ -1,9 +1,9 @@
 <?php
+
 // app/Filament/Widgets/PopularItemsChart.php
 
 namespace App\Filament\Widgets;
 
-use App\Models\Item;
 use App\Models\Loan;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;

@@ -1,18 +1,19 @@
 <?php
+
 // app/Filament/Resources/MaintenanceHistoryResource.php
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
+use App\Filament\Resources\MaintenanceHistoryResource\Pages;
 use App\Models\MaintenanceHistory;
-use Illuminate\Support\Facades\Auth;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\MaintenanceHistoryResource\Pages;
+use Illuminate\Support\Facades\Auth;
 
 class MaintenanceHistoryResource extends Resource
 {
@@ -40,7 +41,7 @@ class MaintenanceHistoryResource extends Resource
                             ->label('Barang')
                             ->relationship('item', 'name')
                             ->searchable(['name', 'item_code'])
-                            ->getOptionLabelFromRecordUsing(fn($record) => "{$record->name} ({$record->item_code})")
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name} ({$record->item_code})")
                             ->required()
                             ->preload(),
 
@@ -108,8 +109,7 @@ class MaintenanceHistoryResource extends Resource
                             ->displayFormat('d/m/Y H:i')
                             ->seconds(false)
                             ->visible(
-                                fn(Forms\Get $get): bool =>
-                                in_array($get('status'), ['completed', 'cancelled'])
+                                fn (Forms\Get $get): bool => in_array($get('status'), ['completed', 'cancelled'])
                             ),
                     ])
                     ->columns(2),
@@ -141,12 +141,12 @@ class MaintenanceHistoryResource extends Resource
                     ->label('Barang')
                     ->searchable()
                     ->sortable()
-                    ->description(fn(MaintenanceHistory $record): string => $record->item->item_code),
+                    ->description(fn (MaintenanceHistory $record): string => $record->item->item_code),
 
                 Tables\Columns\TextColumn::make('maintenance_type')
                     ->label('Jenis')
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'repair' => 'Perbaikan',
                         'service' => 'Servis Rutin',
                         'inspection' => 'Inspeksi',
@@ -154,7 +154,7 @@ class MaintenanceHistoryResource extends Resource
                         'calibration' => 'Kalibrasi',
                         default => $state,
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'repair' => 'danger',
                         'service' => 'info',
                         'inspection' => 'warning',
@@ -172,14 +172,14 @@ class MaintenanceHistoryResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'pending' => 'Pending',
                         'in_progress' => 'Dikerjakan',
                         'completed' => 'Selesai',
                         'cancelled' => 'Dibatalkan',
                         default => $state,
                     })
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'pending' => 'warning',
                         'in_progress' => 'info',
                         'completed' => 'success',
@@ -257,11 +257,11 @@ class MaintenanceHistoryResource extends Resource
                         return $query
                             ->when(
                                 $data['from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('performed_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('performed_at', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('performed_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('performed_at', '<=', $date),
                             );
                     }),
 

@@ -1,9 +1,10 @@
 <?php
+
 // database/migrations/2024_01_01_000004_add_inventory_fields_to_users_table.php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
