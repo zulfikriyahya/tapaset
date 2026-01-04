@@ -30,7 +30,7 @@ EXCLUDE_PATTERNS=(
 
   # Environment & Config
   "./.env"
-  "./.env.example"
+  # "./.env.example"
   "./.env.backup"
   "./.env.production"
 
