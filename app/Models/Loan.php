@@ -1,4 +1,5 @@
 <?php
+// app/Models/Loan.php
 
 namespace App\Models;
 
@@ -6,6 +7,7 @@ use App\Enums\LoanStatus;
 use App\Enums\ItemCondition;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -13,11 +15,6 @@ class Loan extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'loan_number',
         'user_id',
@@ -36,52 +33,59 @@ class Loan extends Model
         'is_paid',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'user_id' => 'integer',
-            'item_id' => 'integer',
-            'loan_date' => 'timestamp',
-            'due_date' => 'timestamp',
-            'return_date' => 'timestamp',
-            'created_by' => 'integer',
-            'returned_by' => 'integer',
-            'approved_by' => 'integer',
-            'penalty_amount' => 'decimal:2',
-            'is_paid' => 'boolean',
-            'status' => LoanStatus::class,
-            'returned_condition' => ItemCondition::class,
-        ];
-    }
+    protected $casts = [
+        'status' => LoanStatus::class,
+        'returned_condition' => ItemCondition::class,
+        'loan_date' => 'datetime',
+        'due_date' => 'datetime',
+        'return_date' => 'datetime',
+        'penalty_amount' => 'decimal:2',
+        'is_paid' => 'boolean',
+    ];
 
-    public function user()
+    // Relationships
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function item()
+    public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class);
     }
 
-    public function createdBy()
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function returnedBy()
+    public function returnedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'returned_by');
     }
 
-    public function approvedBy()
+    public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function rfidLogs(): HasMany
+    {
+        return $this->hasMany(RfidLog::class);
+    }
+
+    // Helper Methods
+    public function isOverdue(): bool
+    {
+        return $this->status === LoanStatus::ACTIVE && $this->due_date < now();
+    }
+
+    public function getDaysLateAttribute(): int
+    {
+        if (!$this->isOverdue()) {
+            return 0;
+        }
+
+        return now()->diffInDays($this->due_date);
     }
 }

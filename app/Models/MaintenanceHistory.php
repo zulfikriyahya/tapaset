@@ -1,4 +1,5 @@
 <?php
+// app/Models/MaintenanceHistory.php
 
 namespace App\Models;
 
@@ -11,11 +12,6 @@ class MaintenanceHistory extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'item_id',
         'maintenance_type',
@@ -29,29 +25,19 @@ class MaintenanceHistory extends Model
         'created_by',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'item_id' => 'integer',
-            'cost' => 'decimal:2',
-            'performed_at' => 'timestamp',
-            'completed_at' => 'timestamp',
-            'created_by' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'performed_at' => 'datetime',
+        'completed_at' => 'datetime',
+        'cost' => 'decimal:2',
+    ];
 
-    public function item()
+    // Relationships
+    public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class);
     }
 
-    public function creator()
+    public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }

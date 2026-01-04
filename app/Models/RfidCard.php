@@ -1,22 +1,18 @@
 <?php
+// app/Models/RfidCard.php
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RfidCard extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'uid',
         'card_number',
@@ -29,23 +25,14 @@ class RfidCard extends Model
         'user_id',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'is_active' => 'boolean',
-            'issued_at' => 'timestamp',
-            'expired_at' => 'timestamp',
-            'last_used_at' => 'timestamp',
-            'user_id' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'is_active' => 'boolean',
+        'issued_at' => 'datetime',
+        'expired_at' => 'datetime',
+        'last_used_at' => 'datetime',
+    ];
 
+    // Relationships
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -54,5 +41,16 @@ class RfidCard extends Model
     public function rfidLogs(): HasMany
     {
         return $this->hasMany(RfidLog::class);
+    }
+
+    // Helper Methods
+    public function isExpired(): bool
+    {
+        return $this->expired_at && $this->expired_at->isPast();
+    }
+
+    public function isValid(): bool
+    {
+        return $this->is_active && !$this->isExpired();
     }
 }

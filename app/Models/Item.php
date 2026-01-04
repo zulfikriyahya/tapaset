@@ -1,4 +1,5 @@
 <?php
+// app/Models/Item.php
 
 namespace App\Models;
 
@@ -14,11 +15,6 @@ class Item extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'name',
         'item_code',
@@ -36,25 +32,15 @@ class Item extends Model
         'image',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'purchase_date' => 'date',
-            'price' => 'decimal:2',
-            'warranty_expired_at' => 'date',
-            'location_id' => 'integer',
-            'category_id' => 'integer',
-            'condition' => ItemCondition::class,
-            'status' => ItemStatus::class,
-        ];
-    }
+    protected $casts = [
+        'condition' => ItemCondition::class,
+        'status' => ItemStatus::class,
+        'purchase_date' => 'date',
+        'warranty_expired_at' => 'date',
+        'price' => 'decimal:2',
+    ];
 
+    // Relationships
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
@@ -78,5 +64,26 @@ class Item extends Model
     public function stockMovements(): HasMany
     {
         return $this->hasMany(StockMovement::class);
+    }
+
+    public function rfidLogs(): HasMany
+    {
+        return $this->hasMany(RfidLog::class);
+    }
+
+    // Helper Methods
+    public function getNameWithCodeAttribute(): string
+    {
+        return "{$this->name} ({$this->item_code})";
+    }
+
+    public function isLowStock(): bool
+    {
+        return $this->min_quantity && $this->quantity <= $this->min_quantity;
+    }
+
+    public function isWarrantyExpired(): bool
+    {
+        return $this->warranty_expired_at && $this->warranty_expired_at->isPast();
     }
 }

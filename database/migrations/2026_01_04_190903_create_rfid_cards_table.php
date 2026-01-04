@@ -1,39 +1,34 @@
 <?php
+// database/migrations/2024_01_01_000005_create_rfid_cards_table.php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('rfid_cards', function (Blueprint $table) {
             $table->id();
-            $table->string('uid')->unique()->index();
-            $table->string('card_number')->nullable()->index();
-            $table->boolean('is_active')->default(true)->index();
+            $table->string('uid')->unique();
+            $table->string('card_number')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamp('issued_at')->nullable();
             $table->timestamp('expired_at')->nullable();
             $table->timestamp('last_used_at')->nullable();
             $table->string('last_used_for')->nullable();
             $table->integer('failed_attempts')->default(0);
-            $table->foreignId('user_id')->nullable()->constrained();
-            $table->timestamps();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->softDeletes();
-        });
+            $table->timestamps();
 
-        Schema::enableForeignKeyConstraints();
+            $table->index('uid');
+            $table->index('card_number');
+            $table->index('is_active');
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('rfid_cards');

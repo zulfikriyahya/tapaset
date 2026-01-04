@@ -1,21 +1,17 @@
 <?php
+// app/Models/Location.php
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Location extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'name',
         'code',
@@ -23,21 +19,23 @@ class Location extends Model
         'is_active',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'is_active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 
+    // Relationships
     public function items(): HasMany
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function stockMovementsFrom(): HasMany
+    {
+        return $this->hasMany(StockMovement::class, 'from_location_id');
+    }
+
+    public function stockMovementsTo(): HasMany
+    {
+        return $this->hasMany(StockMovement::class, 'to_location_id');
     }
 }

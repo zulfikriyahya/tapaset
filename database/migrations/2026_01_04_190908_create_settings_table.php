@@ -1,35 +1,29 @@
 <?php
+// database/migrations/2024_01_01_000010_create_settings_table.php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique()->index();
+            $table->string('key')->unique();
             $table->text('value')->nullable();
             $table->string('type')->default('string');
-            $table->string('group')->nullable()->index();
+            $table->string('group')->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_public')->default(false);
             $table->timestamps();
-        });
 
-        Schema::enableForeignKeyConstraints();
+            $table->index('key');
+            $table->index('group');
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('settings');

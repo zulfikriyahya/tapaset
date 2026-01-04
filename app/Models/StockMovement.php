@@ -1,4 +1,5 @@
 <?php
+// app/Models/StockMovement.php
 
 namespace App\Models;
 
@@ -10,11 +11,6 @@ class StockMovement extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'item_id',
         'movement_type',
@@ -27,39 +23,27 @@ class StockMovement extends Model
         'performed_at',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'item_id' => 'integer',
-            'from_location_id' => 'integer',
-            'to_location_id' => 'integer',
-            'performed_by' => 'integer',
-            'performed_at' => 'timestamp',
-        ];
-    }
+    protected $casts = [
+        'performed_at' => 'datetime',
+    ];
 
-    public function item()
+    // Relationships
+    public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class);
     }
 
-    public function fromLocation()
+    public function fromLocation(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'from_location_id');
     }
 
-    public function toLocation()
+    public function toLocation(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'to_location_id');
     }
 
-    public function performedBy()
+    public function performedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'performed_by');
     }

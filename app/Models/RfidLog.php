@@ -1,20 +1,16 @@
 <?php
+// app/Models/RfidLog.php
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RfidLog extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'rfid_card_id',
         'user_id',
@@ -28,22 +24,7 @@ class RfidLog extends Model
         'response_message',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'rfid_card_id' => 'integer',
-            'user_id' => 'integer',
-            'item_id' => 'integer',
-            'loan_id' => 'integer',
-        ];
-    }
-
+    // Relationships
     public function rfidCard(): BelongsTo
     {
         return $this->belongsTo(RfidCard::class);
